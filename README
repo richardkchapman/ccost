@@ -1,0 +1,15 @@
+Simple power monitoring using CurrentCost and rrdtool
+
+This repository is mainly here to keep a backup of the power usage monitoring
+I have set up on my intranet. While anyone is welcome to make use of any
+of the code in here it is completely unsupported and liable to change
+any time I reconfigure my system. It's also hard-coded to match my setup.
+
+The daemon reads data from a CurrentCost device and saves it in a
+Round-robin Database using rrdtool. The web pages generate graphs from
+the data to show current power usage (generated and imported from grid).
+
+My system runs on a PogoPlug reflashed to boot Arch Linux, running on a
+usb stick. To avoid wearing out the flash prematurely, I have set up my
+system to write to the /tmp directory and use a cron job to copy the
+rrd database to persistent storage once an hour.
