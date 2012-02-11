@@ -17,7 +17,7 @@
     </style>
   </head>
   <body>
-    <h1>Power imported from grid</h1>
+    <h1>Power usage by source</h1>
 <?php
 include "powergraphs.php";
 ?>
@@ -30,7 +30,7 @@ include "powergraphs.php";
     <h2>Previous hour</h2>
     <p><img src="png/power-hour.png" /></p>
 
-    <h2>Previous 6 hour</h2>
+    <h2>Previous 6 hours</h2>
     <p><img src="png/power-6hour.png" /></p>
 
     <h2>Previous 24 hours</h2>
