@@ -19,31 +19,31 @@
   <body>
     <h1>Power usage by source</h1>
 <?php
-include "powergraphs.php";
+include "sourcegraphs.php";
 ?>
     <p>
      <big>
-      Current power imported: <? echo $currentWatts; ?>W, generating <? echo $currentWattsGenerated; ?>W monitored <? echo $currentApp1; ?>W
+      Current power total: <b><? echo $currentWattsImported+currentWattsGenerated; ?>W</b> imported: <? echo $currentWattsImported; ?>W, generating <? echo $currentWattsGenerated; ?>W monitored <? echo $currentApp1; ?>W
      </big>
     </p>
 
     <h2>Previous hour</h2>
-    <p><img src="png/power-hour.png" /></p>
+    <p><img src="png/source-1h.png" /></p>
 
     <h2>Previous 6 hours</h2>
-    <p><img src="png/power-6hour.png" /></p>
+    <p><img src="png/source-6h.png" /></p>
 
     <h2>Previous 24 hours</h2>
-    <p><img src="png/power-day.png" /></p>
+    <p><img src="png/source-1d.png" /></p>
 
     <h2>Previous week</h2>
-    <p><img src="png/power-week.png" /></p>
+    <p><img src="png/source-1w.png" /></p>
 
     <h2>Previous month</h2>
-    <p><img src="png/power-month.png" /></p>
+    <p><img src="png/source-1month.png" /></p>
 
     <h2>Previous year</h2>
-    <p><img src="png/power-year.png" /></p>
+    <p><img src="png/source-1y.png" /></p>
 
   </body>
 </html>

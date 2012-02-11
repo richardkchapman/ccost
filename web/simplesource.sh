@@ -1,7 +1,12 @@
 #!/bin/bash
+
+# Simple graph that shows just the average power by source
+
+PNGDIR=/tmp/ccost/png
 RRDFILE=/tmp/ccost/powertemp.rrd
-rrdtool graph /tmp/ccost/png/power-hour.png \
---start end-1h --width 700 --end now --slope-mode \
+TIMESPAN=$1
+rrdtool graph $PNGDIR/source-$TIMESPAN.png \
+--start end-$TIMESPAN --width 700 --end now --slope-mode \
 --no-legend --vertical-label Watts --lower-limit 0 \
 --alt-autoscale-max \
 DEF:Power=${RRDFILE}:Power:AVERAGE \

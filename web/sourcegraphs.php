@@ -1,7 +1,7 @@
 <?php
 $myFile = "/tmp/ccost/current.log";
 $fh = fopen($myFile, 'r');
-$currentWatts = fgets($fh);
+$currentWattsImported = fgets($fh);
 fclose($fh);
 $myFile = "/tmp/ccost/currentgenerating.log";
 $fh = fopen($myFile, 'r');
@@ -11,10 +11,10 @@ $myFile = "/tmp/ccost/currentapp1.log";
 $fh = fopen($myFile, 'r');
 $currentApp1 = fgets($fh);
 fclose($fh);
-exec ("./powerhour.sh");
-exec ("./power6hour.sh");
-exec ("./powerday.sh");
-exec ("./powerweek.sh");
-exec ("./powermonth.sh");
-exec ("./poweryear.sh");
+exec ("./simplesource.sh 1h");
+exec ("./simplesource.sh 6h");
+exec ("./minmaxsource.sh 1d");
+exec ("./minmaxsource.sh 1w");
+exec ("./minmaxsource.sh 1month");
+exec ("./minmaxsource.sh 1y");
 ?>

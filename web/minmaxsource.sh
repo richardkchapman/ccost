@@ -1,7 +1,13 @@
 #!/bin/bash
+
+# Graph that shows power usage with min/max and average, by source
+
+PNGDIR=/tmp/ccost/png
 RRDFILE=/tmp/ccost/powertemp.rrd
-rrdtool graph /tmp/ccost/png/power-year.png \
---start end-1y --width 700 --end now --slope-mode \
+TIMESPAN=$1
+
+rrdtool graph $PNGDIR/source-$TIMESPAN.png \
+--start end-$TIMESPAN --width 700 --end now --slope-mode \
 --no-legend --vertical-label Watts --lower-limit 0 \
 --alt-autoscale-max \
 DEF:Power=${RRDFILE}:Power:AVERAGE \
@@ -17,5 +23,4 @@ AREA:PowerRange#FF000040:"Error Range":STACK \
 LINE1:PowerGen: \
 LINE1:PowerMin#FF000060:"Min":STACK \
 LINE1:PowerGen: \
-LINE1:PowerMax#FF000060:"Max":STACK
-
+LINE1:PowerMax#FF000060:"Max":STACK 
