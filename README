@@ -13,3 +13,7 @@ My system runs on a PogoPlug reflashed to boot Arch Linux, running on a
 usb stick. To avoid wearing out the flash prematurely, I have set up my
 system to write to the /tmp directory and use a cron job to copy the
 rrd database to persistent storage once an hour.
+
+This work was inspired by and derived from the information at
+http://www.jibble.org/currentcost/
+
