@@ -19,13 +19,14 @@
   <body>
     <h1>Power usage by source</h1>
 <?php
+include "currentvalues.php";
 include "sourcegraphs.php";
 ?>
     <p>
      <a href="index.php">By source</a>&nbsp;<a href="byuse.php">By appliance</a>
     </p><p>
      <big>
-      Current power total: <b><? echo $currentWattsImported+currentWattsGenerated; ?>W</b> imported: <? echo $currentWattsImported; ?>W, generating <? echo $currentWattsGenerated; ?>W monitored <? echo $currentApp1; ?>W
+      Current power total: <b><? echo $currentWattsTotal; ?>W</b> imported: <? echo $currentWattsImported; ?>W, generating <? echo $currentWattsGenerated; ?>W monitored <? echo $currentWattsApp1; ?>W
      </big>
     </p>
 
