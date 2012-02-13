@@ -18,34 +18,33 @@
   </head>
   <body>
     <h1>Power usage by source</h1>
-<?php
-include "currentvalues.php";
-include "sourcegraphs.php";
-?>
     <p>
      <a href="index.php">By source</a>&nbsp;<a href="byuse.php">By appliance</a>
-    </p><p>
-     <big>
-      Current power total: <b><? echo $currentWattsTotal; ?>W</b> imported: <? echo $currentWattsImported; ?>W, generating <? echo $currentWattsGenerated; ?>W monitored <? echo $currentWattsApp1; ?>W
-     </big>
     </p>
+    <?php include "currentvalues.php"; ?>
 
+    <?php exec ("./simplesource.sh 1h"); ?>
     <h2>Previous hour</h2>
     <p><img src="png/source-1h.png" /></p>
 
+    <?php exec ("./simplesource.sh 6h"); ?>
     <h2>Previous 6 hours</h2>
     <p><img src="png/source-6h.png" /></p>
 
+    <?php exec ("./minmaxsource.sh 1d"); ?>
     <h2>Previous 24 hours</h2>
     <p><img src="png/source-1d.png" /></p>
 
-    <h2>Previous week</h2>
+    <?php exec ("./simplesource.sh 1w --step 3600"); ?>
+    <h2>Previous week, by hour</h2>
     <p><img src="png/source-1w.png" /></p>
 
-    <h2>Previous month</h2>
+    <?php exec ("./simplesource.sh 1month --step 86400"); ?>
+    <h2>Previous month, by day</h2>
     <p><img src="png/source-1month.png" /></p>
 
-    <h2>Previous year</h2>
+    <?php exec ("./simplesource.sh 1y --step 604800"); ?>
+    <h2>Previous year, by week</h2>
     <p><img src="png/source-1y.png" /></p>
 
   </body>
