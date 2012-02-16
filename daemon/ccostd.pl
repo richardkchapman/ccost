@@ -13,7 +13,8 @@ use File::Copy;
 my $PORT = "/dev/ttyUSB1";
 my $RRDFILE_SAVE = "/usr/local/var/ccost/powertemp.rrd";
 my $RRDFILE = "/tmp/ccost/powertemp.rrd";
-my $CURRENTFILE = "/tmp/ccost/current.log";
+my $IMPORTFILE = "/tmp/ccost/current.log";
+my $EXPORTFILE = "/tmp/ccost/currentexport.log";
 my $APP1FILE = "/tmp/ccost/currentapp1.log";
 my $GENERATINGFILE = "/tmp/ccost/currentgenerating.log";
 
@@ -50,7 +51,9 @@ MAIN:
   $ob->write_settings;
 
   open(SERIAL, "+>$PORT");
-  my $watts = 0;
+  my $importing = 0;
+  my $importSeen = 0;
+  my $exporting = 0;
   my $generating = 0;
   my $app1 = 0;
   my $temp = 0;
@@ -62,8 +65,12 @@ MAIN:
         $temp = $1;
     }
     if ($line =~ m!<sensor>0</sensor>.*<ch1><watts>0*(\d+)</watts></ch1>!) {
-        $watts = $1;
-        system("echo $watts >$CURRENTFILE");
+        $importing = $1;
+        if ($importing > 0) {
+            $exporting = 0;
+        }
+        $importSeen = 1;
+        system("echo $importing >$IMPORTFILE");
     }
     if ($line =~ m!<sensor>1</sensor>.*<ch1><watts>0*(\d+)</watts></ch1>!) {
         $app1 = $1;
@@ -73,11 +80,19 @@ MAIN:
         $generating = $1;
         system("echo $generating >$GENERATINGFILE");
     }
-    if ($update) {
-      system("rrdtool", "update", "$RRDFILE", "N:$watts:$temp:$generating:$app1");
+    if ($line =~ m!<sensor>3</sensor>.*<ch1><watts>0*(\d+)</watts></ch1>!) {
+        if ($importing > 0) {
+            $exporting = 0;
+        } else {
+            $exporting = $1;
+        }
+        system("echo $exporting >$EXPORTFILE");
+    }
+    if ($update && $importSeen) {
+      system("rrdtool", "update", "$RRDFILE", "N:$importing:$temp:$generating:$app1:$exporting");
     }
     if ($verbose) {
-      print "N:$watts:$temp:$generating:$app1\n";
+      print "N:$importing:$temp:$generating:$app1:$exporting\n";
     }
   }
 
