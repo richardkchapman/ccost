@@ -54,6 +54,7 @@ MAIN:
   my $importing = 0;
   my $importSeen = 0;
   my $exporting = 0;
+  my $exportSeen = 0;
   my $generating = 0;
   my $app1 = 0;
   my $temp = 0;
@@ -66,8 +67,12 @@ MAIN:
     }
     if ($line =~ m!<sensor>0</sensor>.*<ch1><watts>0*(\d+)</watts></ch1>!) {
         $importing = $1;
-        if ($importing > 0) {
+        if ($importing > 0 && $exporting > 0) {
             $exporting = 0;
+            $exportSeen = 0;
+        }
+        elsif ($importing == 0 && $exporting == 0) {
+            $exportSeen = 0;
         }
         $importSeen = 1;
         system("echo $importing >$IMPORTFILE");
@@ -81,14 +86,16 @@ MAIN:
         system("echo $generating >$GENERATINGFILE");
     }
     if ($line =~ m!<sensor>3</sensor>.*<ch1><watts>0*(\d+)</watts></ch1>!) {
-        if ($importing > 0) {
+        if ($importSeen==0 || $importing > 0 || $1 > $generating) {
             $exporting = 0;
         } else {
             $exporting = $1;
         }
+        $exportSeen = 1;
+
         system("echo $exporting >$EXPORTFILE");
     }
-    if ($update && $importSeen) {
+    if ($update && $importSeen && $exportSeen) {
       system("rrdtool", "update", "$RRDFILE", "N:$importing:$temp:$generating:$app1:$exporting");
     }
     if ($verbose) {

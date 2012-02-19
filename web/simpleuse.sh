@@ -15,6 +15,9 @@ DEF:PowerGen=${RRDFILE}:generating:AVERAGE \
 DEF:PowerCar=${RRDFILE}:app1:AVERAGE \
 DEF:PowerExport=${RRDFILE}:exporting:AVERAGE \
 CDEF:PowerTotal=PowerImport,PowerGen,ADDNAN  \
-AREA:PowerTotal#0000FF:"Average" \
-AREA:PowerCar#00FFFF:"Average" \
-STACK:PowerExport#00FF00:"Average"
+CDEF:PowerExpClean=PowerExport,0,ADDNAN  \
+CDEF:PowerTotalUsed1=PowerTotal,PowerExpClean,-  \
+CDEF:PowerTotalUsed=PowerTotalUsed1,0,LT,0,PowerTotalUsed1,IF  \
+AREA:PowerTotalUsed#0000FF:"Average" \
+STACK:PowerExport#00FF00:"Average" \
+AREA:PowerCar#00FFFF:"Average" 
