@@ -15,7 +15,7 @@ $myFile = "/tmp/ccost/currentexport.log";
 $fh = fopen($myFile, 'r');
 $currentWattsExported = (integer) fgets($fh);
 fclose($fh);
-$currentWattsTotal = $currentWattsImported + $currentWattsGenerated;
+$currentWattsTotal = $currentWattsImported + $currentWattsGenerated - $currentWattsExported;
 
 echo "<p>";
 echo " <big>";
