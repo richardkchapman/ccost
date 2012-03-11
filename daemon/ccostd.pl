@@ -16,6 +16,9 @@ my $RRDFILE = "/tmp/ccost/powertemp.rrd";
 my $IMPORTFILE = "/tmp/ccost/current.log";
 my $EXPORTFILE = "/tmp/ccost/currentexport.log";
 my $APP1FILE = "/tmp/ccost/currentapp1.log";
+my $APP4FILE = "/tmp/ccost/currentapp4.log";
+my $APP5FILE = "/tmp/ccost/currentapp5.log";
+my $APP6FILE = "/tmp/ccost/currentapp6.log";
 my $GENERATINGFILE = "/tmp/ccost/currentgenerating.log";
 
 MAIN:
@@ -58,6 +61,9 @@ MAIN:
   my $generating = 0;
   my $generateSeen = 0;
   my $app1 = 0;
+  my $app4 = 0;
+  my $app5 = 0;
+  my $app6 = 0;
   my $temp = 0;
   while (my $line = <SERIAL>) {
     if ($verbose > 1) {
@@ -78,6 +84,18 @@ MAIN:
     if ($line =~ m!<sensor>1</sensor>.*<ch1><watts>0*(\d+)</watts></ch1>!) {
         $app1 = $1;
         system("echo $app1 >$APP1FILE");
+    }
+    if ($line =~ m!<sensor>4</sensor>.*<ch1><watts>0*(\d+)</watts></ch1>!) {
+        $app4 = $1;
+        system("echo $app4 >$APP4FILE");
+    }
+    if ($line =~ m!<sensor>5</sensor>.*<ch1><watts>0*(\d+)</watts></ch1>!) {
+        $app5 = $1;
+        system("echo $app5 >$APP5FILE");
+    }
+    if ($line =~ m!<sensor>6</sensor>.*<ch1><watts>0*(\d+)</watts></ch1>!) {
+        $app6 = $1;
+        system("echo $app6 >$APP6FILE");
     }
     if ($line =~ m!<sensor>2</sensor>.*<ch1><watts>0*(\d+)</watts></ch1>!) {
         $generating = $1;
@@ -100,10 +118,10 @@ MAIN:
         system("echo $exporting >$EXPORTFILE");
     }
     if ($update && $importSeen && $generateSeen) {
-      system("rrdtool", "update", "$RRDFILE", "N:$importing:$temp:$generating:$app1:$exporting");
+      system("rrdtool", "update", "$RRDFILE", "N:$importing:$temp:$generating:$app1:$exporting:$app4:$app5:$app6");
     }
     if ($verbose) {
-      print "N:$importing:$temp:$generating:$app1:$exporting\n";
+      print "N:$importing:$temp:$generating:$app1:$exporting:$app4:$app5:$app6\n";
     }
   }
 
