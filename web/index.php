@@ -23,6 +23,10 @@
     </p>
     <?php include "currentvalues.php"; ?>
 
+    <?php exec ("./simplesource.sh 10m"); ?>
+    <h2>Previous 10 minutes</h2>
+    <p><img src="png/source-10m.png" /></p>
+
     <?php exec ("./simplesource.sh 1h"); ?>
     <h2>Previous hour</h2>
     <p><img src="png/source-1h.png" /></p>
