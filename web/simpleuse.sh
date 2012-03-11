@@ -8,12 +8,17 @@ TIMESPAN=$1
 shift
 
 GENMUL=1
+EXPORTMUL=1
 CARMUL=1
 DRIERMUL=1
 FRIDGEMUL=1
 TVMUL=1
 if [[ $1 == "--nogen" ]]; then
     GENMUL=0
+    shift
+fi
+if [[ $1 == "--noexport" ]]; then
+    EXPORTMUL=0
     shift
 fi
 if [[ $1 == "--nocar" ]]; then
@@ -51,7 +56,7 @@ CDEF:PowerExpClean=PowerExport,0,ADDNAN  \
 CDEF:PowerTotalUsed1=PowerTotal,PowerExpClean,-  \
 CDEF:PowerTotalUsed=PowerTotalUsed1,0,LT,0,PowerTotalUsed1,IF  \
 CDEF:UsePowerTotal=PowerTotalUsed,$GENMUL,* \
-CDEF:UseExport=PowerExport,$GENMUL,* \
+CDEF:UseExport=PowerExport,$EXPORTMUL,* \
 CDEF:UsePowerCar=PowerCar,$CARMUL,* \
 CDEF:UsePowerFridge=PowerFridge,$FRIDGEMUL,* \
 CDEF:UsePowerDrier=PowerDrier,$DRIERMUL,* \

@@ -26,6 +26,9 @@
      $gen = $_POST["gen"];
      if ($gen=="no")
         $param = $param . " --nogen";
+     $export = $_POST["export"];
+     if ($export=="no")
+        $param = $param . " --noexport";
      $car = $_POST["car"];
      if ($car=="no")
         $param = $param . " --nocar";
@@ -40,16 +43,30 @@
         $param = $param . " --notv";
      echo "select = $select - $param<br/>";
     ?>
+    <font color="#0000ff">
     <input type="hidden" name="gen" value="no"/>
     <input type="checkbox" name="gen" value="yes" <?php if ($gen!="no") echo "checked=\"checked\""; ?> /> Include generation<br/>
+    </font>
+    <font color="#00ff00">
+    <input type="hidden" name="export" value="no"/>
+    <input type="checkbox" name="export" value="yes" <?php if ($export!="no") echo "checked=\"checked\""; ?> /> Include export<br/>
+    </font>
+    <font color="#00ffff">
     <input type="hidden" name="car" value="no"/>
     <input type="checkbox" name="car" value="1" <?php if ($car!="no") echo "checked=\"checked\""; ?> /> Include car<br/>
+    </font>
+    <font color="#ff0000">
     <input type="hidden" name="drier" value="no"/>
     <input type="checkbox" name="drier" value="1" <?php if ($drier!="no") echo "checked=\"checked\""; ?> /> Include tumble drier<br/>
+    </font>
+    <font color="#ffff00">
     <input type="hidden" name="fridge" value="no"/>
     <input type="checkbox" name="fridge" value="1" <?php if ($fridge!="no") echo "checked=\"checked\""; ?> /> Include freezer<br/>
+    </font>
+    <font color="#ff00ff">
     <input type="hidden" name="tv" value="no"/>
     <input type="checkbox" name="tv" value="1" <?php if ($tv!="no") echo "checked=\"checked\""; ?> /> Include tv/freesat<br/>
+    </font>
     <input type="submit" value="Reload"/><br/>
     <?php exec ("./simpleuse.sh 10m $param"); ?>
     <h2>Previous 10 minutes</h2>
