@@ -1,7 +1,6 @@
 #!/usr/bin/php
 <html>
   <head>
-    <meta http-equiv="refresh" content="60"/>
     <meta NAME="pragma" CONTENT="no-cache"/>
     <meta http-equiv="cache-control" content="no-cache"/>
     <Title>Power usage by appliance</title>
@@ -16,7 +15,17 @@
       }
     </style>
   </head>
-  <body>
+  <script type="text/javascript">
+    function submitForm()
+    {
+     document.byuse.submit();
+    }
+    function doLoad()
+    {
+      setTimeout( "submitForm()", 60*1000 );
+    }
+  </script>
+  <body onLoad="doLoad()">
    <form name="byuse" action="byuse.php" method="post">
     <h1>Power usage by appliance</h1>
     <p>
@@ -41,17 +50,28 @@
      $tv = $_POST["tv"];
      if ($tv=="no")
         $param = $param . " --notv";
+     $lighting = $_POST["lighting"];
+     if ($lighting=="no")
+        $param = $param . " --nolighting";
+     $sock1 = $_POST["sock1"];
+     if ($sock1=="no")
+        $param = $param . " --nosock1";
+     $sock2 = $_POST["sock2"];
+     if ($sock2=="no")
+        $param = $param . " --nosock2";
+#     $rightUnits = "--right-axis 1.3:0 --right-axis-label 'Pounds/Year'"; 
+     $rightUnits = "--right-axis 0.356:0 --right-axis-label 'Pence/day'";
      echo "select = $select - $param<br/>";
     ?>
     <font color="#0000ff">
     <input type="hidden" name="gen" value="no"/>
     <input type="checkbox" name="gen" value="yes" <?php if ($gen!="no") echo "checked=\"checked\""; ?> /> Include generation<br/>
     </font>
-    <font color="#00ff00">
+    <font color="#c0ffc0">
     <input type="hidden" name="export" value="no"/>
     <input type="checkbox" name="export" value="yes" <?php if ($export!="no") echo "checked=\"checked\""; ?> /> Include export<br/>
     </font>
-    <font color="#00ffff">
+    <font color="#00c000">
     <input type="hidden" name="car" value="no"/>
     <input type="checkbox" name="car" value="1" <?php if ($car!="no") echo "checked=\"checked\""; ?> /> Include car<br/>
     </font>
@@ -59,7 +79,7 @@
     <input type="hidden" name="drier" value="no"/>
     <input type="checkbox" name="drier" value="1" <?php if ($drier!="no") echo "checked=\"checked\""; ?> /> Include tumble drier<br/>
     </font>
-    <font color="#ffff00">
+    <font color="#coffff">
     <input type="hidden" name="fridge" value="no"/>
     <input type="checkbox" name="fridge" value="1" <?php if ($fridge!="no") echo "checked=\"checked\""; ?> /> Include freezer<br/>
     </font>
@@ -67,32 +87,44 @@
     <input type="hidden" name="tv" value="no"/>
     <input type="checkbox" name="tv" value="1" <?php if ($tv!="no") echo "checked=\"checked\""; ?> /> Include tv/freesat<br/>
     </font>
+    <font color="#ffff00">
+    <input type="hidden" name="lighting" value="no"/>
+    <input type="checkbox" name="lighting" value="1" <?php if ($lighting!="no") echo "checked=\"checked\""; ?> /> Include lighting<br/>
+    </font>
+    <font color="#404040">
+    <input type="hidden" name="sock1" value="no"/>
+    <input type="checkbox" name="sock1" value="1" <?php if ($sock1!="no") echo "checked=\"checked\""; ?> /> Include socket circuit 1<br/>
+    </font>
+    <font color="#808080">
+    <input type="hidden" name="sock2" value="no"/>
+    <input type="checkbox" name="sock2" value="1" <?php if ($sock2!="no") echo "checked=\"checked\""; ?> /> Include socket circuit 2<br/>
+    </font>
     <input type="submit" value="Reload"/><br/>
-    <?php exec ("./simpleuse.sh 10m $param"); ?>
+    <?php exec ("./simpleuse.sh 10m $param $rightUnits"); ?>
     <h2>Previous 10 minutes</h2>
     <p><img src="png/use-10m.png" /></p>
 
-    <?php exec ("./simpleuse.sh 1h $param"); ?>
+    <?php exec ("./simpleuse.sh 1h $param $rightUnits"); ?>
     <h2>Previous hour</h2>
     <p><img src="png/use-1h.png" /></p>
 
-    <?php exec ("./simpleuse.sh 6h $param"); ?>
+    <?php exec ("./simpleuse.sh 6h $param $rightUnits"); ?>
     <h2>Previous 6 hours</h2>
     <p><img src="png/use-6h.png" /></p>
 
-    <?php exec ("./simpleuse.sh 1d $param"); ?>
+    <?php exec ("./simpleuse.sh 1d $param $rightUnits"); ?>
     <h2>Previous 24 hours</h2>
     <p><img src="png/use-1d.png" /></p>
 
-    <?php exec ("./simpleuse.sh 1w $param --step 600"); ?>
+    <?php exec ("./simpleuse.sh 1w $param --step 600 $rightUnits"); ?>
     <h2>Previous week</h2>
     <p><img src="png/use-1w.png" /></p>
 
-    <?php exec ("./simpleuse.sh 1month $param --step 86400"); ?>
+    <?php exec ("./simpleuse.sh 1month $param --step 86400 $rightUnits"); ?>
     <h2>Previous month, by day</h2>
     <p><img src="png/use-1month.png" /></p>
 
-    <?php exec ("./simpleuse.sh 1y $param --step 604800"); ?>
+    <?php exec ("./simpleuse.sh 1y $param --step 604800 $rightUnits"); ?>
     <h2>Previous year, by week</h2>
     <p><img src="png/use-1y.png" /></p>
    <form>
