@@ -1,4 +1,4 @@
-Simple power monitoring using CurrentCost and rrdtool
+Simple power monitoring using CurrentCost and rrdtoolcds
 
 This repository is mainly here to keep a backup of the power usage monitoring
 I have set up on my intranet. While anyone is welcome to make use of any
