@@ -1,0 +1,50 @@
+#!/bin/sh
+
+. /etc/rc.conf
+. /etc/rc.d/functions
+
+CCOSTD_PID=/var/run/ccostd.pl.pid
+CCOSTD_BIN=/usr/local/bin/ccostd.pl
+USB=`findUSB.sh pl2303`
+
+kill_running_processes() {
+	if [ -f $CCOSTD_PID ]; then
+		echo "ccostd pid file $RADROUTER_PID exists - killing existing process"
+		kill -15 `cat $CCOSTD_PID`
+		rm -f $CCOSTD_PID
+	fi
+}
+
+case "$1" in
+  start)
+	kill_running_processes
+	echo "Starting ccostd daemons:"
+        mkdir /temp/ccost 2>/dev/null
+
+	if [ -x $CCOSTD_BIN ]; then
+	    echo $CCOSTD_BIN $USB 
+	    $CCOSTD_BIN $USB >/tmp/ccost/ccostd.log 2>/tmp/ccost/ccostd.err.log
+	else
+	    echo "Cannot find $CCOSTD_BIN - exiting!"
+            stat_fail
+	    exit 10
+	fi
+        add_daemon ccostd
+        stat_done
+    ;;
+  stop)
+	echo "Shutting down ccostd daemon..."
+	kill_running_processes
+        rm_daemon ccostd
+        stat_done
+    ;;
+  restart)
+	$0 stop  && sleep 2
+	$0 start
+    ;;
+  *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit 0

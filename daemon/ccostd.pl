@@ -10,7 +10,7 @@ use Proc::PID::File;
 use Device::SerialPort qw( :PARAM :STAT 0.07 );
 use File::Copy;
 
-my $PORT = "/dev/ttyUSB1";
+my $PORT = "/dev/ttyUSB0";
 my $RRDFILE_SAVE = "/usr/local/var/ccost/powertemp.rrd";
 my $RRDFILE = "/tmp/ccost/powertemp.rrd";
 my $IMPORTFILE = "/tmp/ccost/current.log";
@@ -36,8 +36,7 @@ MAIN:
       $update = 0;
       $daemon = 0;
     } else {
-#      usage();
-      exit 1;
+      $PORT = "/dev/$arg"
     }
   }
   if ($daemon) {
@@ -58,7 +57,6 @@ MAIN:
 
   open(SERIAL, "+>$PORT");
   my $importing = 0;
-  my $importSeen = 0;
   my $exporting = 0;
   my $exportSeen = 0;
   my $generating = 0;
@@ -71,7 +69,16 @@ MAIN:
   my $cct8 = 0;
   my $cct9 = 0;
   my $temp = 0;
+  my $lastSaveTime = time;
   while (my $line = <SERIAL>) {
+    my $timeSinceSave = time - $lastSaveTime;
+    if ($timeSinceSave > 3600) {
+      if ($verbose > 0) {
+        print "Saving result file\n";
+      }
+      copy($RRDFILE, $RRDFILE_SAVE);
+      $lastSaveTime = time;
+    }
     if ($verbose > 1) {
       print $line;
     }
@@ -80,8 +87,18 @@ MAIN:
     }
     if ($line =~ m!<sensor>0</sensor>.*<ch1><watts>0*(\d+)</watts></ch1>!) {
         $importing = $1;
-        $importSeen = 1;
         system("echo $importing >$IMPORTFILE");
+        if ($importing > 0) {
+           $exporting = 0;
+           $exportSeen = 0;
+           system("echo $exporting >$EXPORTFILE");
+        }
+        if ($update && $generateSeen) {
+          system("rrdtool", "update", "$RRDFILE", "N:$importing:$temp:$generating:$app1:$exporting:$app4:$app5:$app6:$cct7:$cct8:$cct9");
+        }
+        if ($verbose) {
+          print "N:$importing:$temp:$generating:$app1:$exporting:$app4:$app5:$app6:$cct7:$cct8:$cct9\n";
+        }
     }
     elsif ($line =~ m!<sensor>1</sensor>.*<ch1><watts>0*(\d+)</watts></ch1>!) {
         $app1 = $1;
@@ -117,15 +134,14 @@ MAIN:
         system("echo $generating >$GENERATINGFILE");
     }
     elsif ($line =~ m!<sensor>3</sensor>.*<ch1><watts>0*(\d+)</watts></ch1>!) {
-        $exporting = $1;
-        $exportSeen = 1;
-        system("echo $exporting >$EXPORTFILE");
-    }
-    if ($update && $importSeen && $generateSeen && $exportSeen) {
-      system("rrdtool", "update", "$RRDFILE", "N:$importing:$temp:$generating:$app1:$exporting:$app4:$app5:$app6:$cct7:$cct8:$cct9");
-    }
-    if ($verbose) {
-      print "N:$importing:$temp:$generating:$app1:$exporting:$app4:$app5:$app6:$cct7:$cct8:$cct9\n";
+        if ($importing == 0) {
+          if ($exportSeen) {
+            $exporting = $1;
+            system("echo $exporting >$EXPORTFILE");
+          } else {
+            $exportSeen = 1;
+          }
+        }
     }
   }
 
